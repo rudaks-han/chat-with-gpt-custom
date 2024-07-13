@@ -39,7 +39,7 @@ const root = ReactDOM.createRoot(
 async function bootstrapApplication() {
   root.render(
     <React.StrictMode>
-      <MantineProvider theme={{ colorScheme: "dark" }}>
+      <MantineProvider theme={{ colorScheme: "light" }}>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <ModalsProvider>

@@ -1,14 +1,13 @@
 import styled from "@emotion/styled";
-import { ActionIcon, Button, Loader, Textarea } from "@mantine/core";
-import { getHotkeyHandler, useHotkeys, useMediaQuery } from "@mantine/hooks";
-import { useCallback, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAppContext } from "../core/context";
-import { useAppDispatch, useAppSelector } from "../store";
-import { selectMessage, setMessage } from "../store/message";
-import { selectSettingsTab } from "../store/settings-ui";
-import QuickSettings from "./quick-settings";
-import { useOption } from "../core/options/use-option";
+import {ActionIcon, Button, Loader, Textarea} from "@mantine/core";
+import {getHotkeyHandler, useHotkeys, useMediaQuery} from "@mantine/hooks";
+import {useCallback, useMemo} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useAppContext} from "../core/context";
+import {useAppDispatch, useAppSelector} from "../store";
+import {selectMessage, setMessage} from "../store/message";
+import {selectSettingsTab} from "../store/settings-ui";
+import {useOption} from "../core/options/use-option";
 
 const Container = styled.div`
   background: #292933;
@@ -124,7 +123,7 @@ export default function MessageInput(props: MessageInputProps) {
   const disabled = context.generating;
 
   const isLandingPage = pathname === "/";
-  if (context.isShare || (!isLandingPage && !context.id)) {
+  if (!isLandingPage && !context.id) {
     return null;
   }
 

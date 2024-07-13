@@ -36,29 +36,6 @@ export class ReplyRequest extends EventEmitter {
     this.mutatedParameters = { ...requestedParameters };
   }
 
-  pluginContext = (pluginID: string) =>
-    ({
-      getOptions: () => {
-        return this.pluginOptions.getAllOptions(pluginID, this.chat.id);
-      },
-
-      getCurrentChat: () => {
-        return this.chat;
-      },
-
-      createChatCompletion: async (
-        messages: OpenAIMessage[],
-        _parameters: Parameters,
-      ) => {
-        return await createChatCompletion(messages, {
-          ..._parameters,
-        });
-      },
-
-      setChatTitle: async (title: string) => {
-        this.yChat.title = title;
-      },
-    }) as PluginContext;
 
   private scheduleTimeout() {
     this.lastChunkReceivedAt = Date.now();
@@ -76,20 +53,6 @@ export class ReplyRequest extends EventEmitter {
   public async execute() {
     try {
       this.scheduleTimeout();
-
-      await pluginRunner(
-        "preprocess-model-input",
-        this.pluginContext,
-        async (plugin) => {
-          const output = await plugin.preprocessModelInput(
-            this.mutatedMessages,
-            this.mutatedParameters,
-          );
-          this.mutatedMessages = output.messages;
-          this.mutatedParameters = output.parameters;
-          this.lastChunkReceivedAt = Date.now();
-        },
-      );
 
       const { emitter, cancel } = await createStreamingChatCompletion(
         this.mutatedMessages,

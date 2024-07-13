@@ -77,10 +77,7 @@ export function Page(props: {
         {/*<Sidebar />*/}
         <Main key={props.id}>
           <Header
-            share={props.headerProps?.share}
-            canShare={props.headerProps?.canShare}
             title={props.headerProps?.title}
-            onShare={props.headerProps?.onShare}
           />
           {props.showSubHeader && <SubHeader />}
           {props.children}

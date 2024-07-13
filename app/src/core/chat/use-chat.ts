@@ -11,7 +11,7 @@ export interface UseChatResult {
     leaf: Message | null | undefined;
 }
 
-export function useChat(chatManager: ChatManager, id: string | undefined | null, share = false): UseChatResult {
+export function useChat(chatManager: ChatManager, id: string | undefined | null): UseChatResult {
     const [chat, setChat] = useState<Chat | null | undefined>(null);
     const [_, setVersion] = useState(0); // eslint-disable-line @typescript-eslint/no-unused-vars
 
@@ -20,24 +20,15 @@ export function useChat(chatManager: ChatManager, id: string | undefined | null,
 
     const update = useCallback(async () => {
         if (id) {
-            if (!share) {
-                const c = chatManager.get(id);
-                if (c) {
-                    setChat(c);
-                    setVersion(v => v + 1);
-                    return;
-                }
-            } else {
-                const c = await backend.current?.getSharedChat(id);
-                if (c) {
-                    setChat(c);
-                    setVersion(v => v + 1);
-                    return;
-                }
+            const c = chatManager.get(id);
+            if (c) {
+                setChat(c);
+                setVersion(v => v + 1);
+                return;
             }
         }
         setChat(null);
-    }, [id, share, chatManager]);
+    }, [id, chatManager]);
 
     useEffect(() => {
         if (id) {

@@ -9,13 +9,6 @@ import { useAppSelector } from "../store";
 import { selectSettingsTab } from "../store/settings-ui";
 import { Markdown } from "./markdown";
 
-// hide for everyone but screen readers
-const SROnly = styled.span`
-  position: fixed;
-  left: -9999px;
-  top: -9999px;
-`;
-
 const Container = styled.div`
   &.by-user {
     background: #22232b;

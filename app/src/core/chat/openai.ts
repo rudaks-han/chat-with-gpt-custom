@@ -1,18 +1,8 @@
 import EventEmitter from "events";
-import { Configuration, OpenAIApi } from "openai";
 import SSE from "../utils/sse";
-import { OpenAIMessage, Parameters } from "./types";
-import { backend } from "../backend";
+import {OpenAIMessage, Parameters} from "./types";
 
 export const defaultModel = "gpt-3.5-turbo";
-
-export function isProxySupported() {
-  return !!backend.current?.services?.includes("openai");
-}
-
-function shouldUseProxy(apiKey: string | undefined | null) {
-  return !apiKey && isProxySupported();
-}
 
 function getEndpoint() {
   // return "/endpoint___";
@@ -30,49 +20,6 @@ export interface OpenAIResponseChunk {
     finish_reason: string | null;
   }[];
   model?: string;
-}
-
-function parseResponseChunk(buffer: any): OpenAIResponseChunk {
-  const chunk = buffer.toString().replace("data: ", "").trim();
-
-  if (chunk === "[DONE]") {
-    return {
-      done: true,
-    };
-  }
-
-  const parsed = JSON.parse(chunk);
-
-  return {
-    id: parsed.id,
-    done: false,
-    choices: parsed.choices,
-    model: parsed.model,
-  };
-}
-
-export async function createChatCompletion(
-  messages: OpenAIMessage[],
-  parameters: Parameters,
-): Promise<string> {
-  const endpoint = getEndpoint();
-
-  const response = await fetch(endpoint + "/v2/chat/completions", {
-    method: "POST",
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      Authorization: "___ ",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: parameters.model,
-      messages: messages,
-    }),
-  });
-
-  const data = await response.json();
-
-  return data.choices[0].message?.content?.trim() || "";
 }
 
 export async function createStreamingChatCompletion(
@@ -116,11 +63,6 @@ export async function createStreamingChatCompletion(
     }
 
     try {
-      /*const chunk = parseResponseChunk(event.data);
-      if (chunk.choices && chunk.choices.length > 0) {
-        contents += chunk.choices[0]?.delta?.content || "";
-        emitter.emit("data", contents);
-      }*/
       if (event.data) {
         const chunk = JSON.parse(event.data);
         contents += chunk.content || "";
@@ -138,14 +80,3 @@ export async function createStreamingChatCompletion(
     cancel: () => eventSource.close(),
   };
 }
-
-export const maxTokensByModel = {
-  "gpt-3.5-turbo": 4096,
-  "gpt-4": 8192,
-  "gpt-4-0613": 8192,
-  "gpt-4-32k": 32768,
-  "gpt-4-32k-0613": 32768,
-  "gpt-3.5-turbo-16k": 16384,
-  "gpt-3.5-turbo-0613": 4096,
-  "gpt-3.5-turbo-16k-0613": 16384,
-};

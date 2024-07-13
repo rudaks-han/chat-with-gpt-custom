@@ -142,9 +142,6 @@ function HeaderButton(
 
 export interface HeaderProps {
   title?: any;
-  onShare?: () => void;
-  share?: boolean;
-  canShare?: boolean;
 }
 
 export default function Header(props: HeaderProps) {
@@ -172,41 +169,16 @@ export default function Header(props: HeaderProps) {
     );
   }, [navigate]);
 
-  const openSettings = useCallback(() => {
-    dispatch(setTab(openAIApiKey ? "chat" : "user"));
-  }, [openAIApiKey, dispatch]);
-
-  const signIn = useCallback(() => {
-    if ((window as any).AUTH_PROVIDER !== "local") {
-      backend.current?.signIn();
-    } else {
-      dispatch(openLoginModal());
-    }
-  }, [dispatch]);
-
-  const signUp = useCallback(() => {
-    if ((window as any).AUTH_PROVIDER !== "local") {
-      backend.current?.signIn();
-    } else {
-      dispatch(openSignupModal());
-    }
-  }, [dispatch]);
-
   useHotkeys([["c", onNewChat]]);
 
   const header = useMemo(
     () => (
       <>
-        {context.sessionExpired && (
-          <Banner onClick={signIn}>
-            You have been signed out. Click here to sign back in.
-          </Banner>
-        )}
         <HeaderContainer className={context.isHome ? "shaded" : ""}>
           <Helmet>
             <title>
               {props.title ? `${props.title} - ` : ""}
-              Chat with GPT - Unofficial ChatGPT app
+              Chat with GPT
             </title>
           </Helmet>
 
@@ -228,19 +200,10 @@ export default function Header(props: HeaderProps) {
       sidebarOpen,
       onBurgerClick,
       props.title,
-      props.share,
-      props.canShare,
-      props.onShare,
-      openSettings,
       onNewChat,
       loading,
-      context.authenticated,
-      context.sessionExpired,
       context.isHome,
-      context.isShare,
       spotlight.openSpotlight,
-      signIn,
-      signUp,
     ],
   );
 
